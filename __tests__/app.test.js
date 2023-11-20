@@ -3,6 +3,7 @@ const db = require("../db/connection.js")
 const seed = require("../db/seeds/seed.js")
 const testData = require("../db/data/test-data/index.js")
 const app = require("../app.js")
+const endPoints = require("../endpoints")
 
 afterAll(() => {
     return db.end();
@@ -18,14 +19,7 @@ describe("/api", () => {
         .get("/api")
         .expect(200)
         .then((response) => {
-            expect(response.body["GET /api"]).toEqual({"description": "serves up a json representation of all the available endpoints of the api"})
-            expect(response.body["GET /api/topics"]).toEqual({
-                "description": "serves an array of all topics",
-                "queries": [],
-                "exampleResponse": {
-                  "topics": [{ "slug": "football", "description": "Footie!" }]
-                }
-              })
+            expect(response.body.apiEndPoints).toEqual(endPoints)
         })
     })
 })
@@ -44,6 +38,28 @@ describe("/api/topics", () => {
         })
     })
 })
+
+describe("/api/articles", () => {
+    test.only("Get: 200 sends an array of topics to the client", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+            expect(response.body.articles.length).toBe(13);
+            response.body.articles.forEach((article) => {
+                expect(typeof article.author).toBe('string')
+                expect(typeof article.title).toBe('string')
+                expect(typeof article.article_id).toBe('number')
+                expect(typeof article.topic).toBe('string')
+                expect(typeof article.created_at).toBe('string')
+                expect(typeof article.votes).toBe('number')
+                expect(typeof article.article_img_url).toBe('string')
+                expect(typeof article.comment_count).toBe('string')
+            })
+        })
+    })
+})
+
 
 describe("/api/articles/:article_id", () => {
     test("Get: 200 sends an object with the correct properties", () => {
