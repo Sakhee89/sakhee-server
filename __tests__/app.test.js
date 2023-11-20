@@ -40,7 +40,7 @@ describe("/api/topics", () => {
 })
 
 describe("/api/articles", () => {
-    test.only("Get: 200 sends an array of topics to the client", () => {
+    test("Get: 200 sends an array of topics to the client", () => {
         return request(app)
         .get("/api/articles")
         .expect(200)
