@@ -12,6 +12,24 @@ beforeEach(() => {
     return seed(testData)
 })
 
+describe("/api", () => {
+    test("Get: 200 sends an object of all available endpoints", () => {
+        return request(app)
+        .get("/api")
+        .expect(200)
+        .then((response) => {
+            expect(response.body["GET /api"]).toEqual({"description": "serves up a json representation of all the available endpoints of the api"})
+            expect(response.body["GET /api/topics"]).toEqual({
+                "description": "serves an array of all topics",
+                "queries": [],
+                "exampleResponse": {
+                  "topics": [{ "slug": "football", "description": "Footie!" }]
+                }
+              })
+        })
+    })
+})
+
 describe("/api/topics", () => {
     test("Get: 200 sends an array of topics to the client", () => {
         return request(app)
