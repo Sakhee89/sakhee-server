@@ -58,6 +58,15 @@ describe("/api/articles", () => {
             })
         })
     })
+
+    test("Get: 200 sends an array of topics sorted by date created in descending order", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+            expect(response.body.articles).toBeSortedBy("created_at", {descending: true,})
+    })
+})
 })
 
 
