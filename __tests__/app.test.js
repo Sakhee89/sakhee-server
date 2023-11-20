@@ -26,3 +26,60 @@ describe("/api/topics", () => {
         })
     })
 })
+
+describe("/api/articles/:article_id", () => {
+    test("Get: 200 sends an object with the correct properties", () => {
+        return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((response) => {
+            expect(response.body.article).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: "2020-07-09T20:11:00.000Z",
+                votes: 100,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    })
+
+    test("Get: 200 sends an object with the correct properties", () => {
+        return request(app)
+        .get("/api/articles/3")
+        .expect(200)
+        .then((response) => {
+            expect(response.body.article).toMatchObject({
+                article_id: 3,
+                title: "Eight pug gifs that remind me of mitch",
+                topic: "mitch",
+                author: "icellusedkars",
+                body: "some gifs",
+                created_at: "2020-11-03T09:12:00.000Z",
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    })
+
+    test("Get: 404 sends an appropriate status and error message when given a valid but non-existent id", () => {
+        return request(app)
+        .get("/api/articles/888")
+        .expect(404)
+        .then((response) => {
+            expect(response.body.msg).toBe("article does not exist")
+        })
+    })
+
+    test("Get: 400 sends an appropriate status and error message when given an invalid id", () => {
+        return request(app)
+        .get("/api/articles/not-an-article")
+        .expect(400)
+        .then((response) => {
+            expect(response.body.msg).toBe("Bad request")
+        })
+    })
+})
