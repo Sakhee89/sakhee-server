@@ -8,3 +8,7 @@ exports.selectArticleById = (article_id) => {
         return result.rows[0]
     })
 }
+
+exports.selectCommentsByArticleId = (article_id) => {
+    return db.query(`SELECT * FROM comments WHERE comments.article_id = $`)
+}

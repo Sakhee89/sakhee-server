@@ -101,3 +101,22 @@ describe("/api/articles/:article_id", () => {
         })
     })
 })
+
+// describe("/api/articles/:article_id/comments", () => {
+//     test("Get: 200 sends an array of comments belonging to a single article to the client", () => {
+//         return request(app)
+//         .get("/api/articles/1/comments")
+//         .expect(200)
+//         .then((response) => {
+//             expect(response.body.comments.length).toBe(11)
+//             response.body.comments.forEach((comment) => {
+//                 expect(typeof comment.comment_id).toBe("number")
+//                 expect(typeof comment.votes).toBe("number")
+//                 expect(typeof comment.created_at).toBe("string")
+//                 expect(typeof comment.author).toBe("string")
+//                 expect(typeof comment.body).toBe("string")
+//                 expect(typeof comment.article_id).toBe("string")
+//             })
+//         })
+//     })
+// } )
