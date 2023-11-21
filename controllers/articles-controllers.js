@@ -25,16 +25,15 @@ exports.getArticlesById = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
-  const articlePromises = [selectCommentsByArticleId(article_id)];
-
-  if (article_id) {
-    articlePromises.push(checkExists("articles", "article_id", article_id));
-  }
-
-  Promise.all(articlePromises)
-    .then((resolvedPromises) => {
-      const comments = resolvedPromises[0];
-      res.status(200).send({ comments });
+  checkExists("articles", "article_id", article_id)
+    .then(() => {
+      selectCommentsByArticleId(article_id)
+        .then((comments) => {
+          res.status(200).send({ comments });
+        })
+        .catch((err) => {
+          next(err);
+        });
     })
     .catch((err) => {
       next(err);
