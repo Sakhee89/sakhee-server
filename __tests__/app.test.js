@@ -150,6 +150,73 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
+  test("Get: 200 sends an array of comments belonging to a single article to the client", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        const commentObj = {
+          comment_id: 9,
+          body: "Superficially charming",
+          article_id: 1,
+          author: "icellusedkars",
+          votes: 0,
+          created_at: "2020-01-01T03:08:00.000Z",
+        };
+        expect(
+          response.body.comments[response.body.comments.length - 1]
+        ).toMatchObject(commentObj);
+        expect(response.body.comments.length).toBe(11);
+        response.body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(1);
+        });
+      });
+  });
+
+  test("Get: 200 sends an array of comments with recents comments first", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(2);
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+
+  test("Get: 404 sends an appropriate status error message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/399/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("Get: 200 sends back an empty array to the client, when article id exist, but there is no comments for the id", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toEqual([]);
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/not-an-id/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
   test("Post: 201 inserts a new comment to the comments table and returns the created comment to the client", () => {
     const newComment = {
       username: "rogersop",
