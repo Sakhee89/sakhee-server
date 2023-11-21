@@ -40,7 +40,7 @@ describe("/api/topics", () => {
 })
 
 describe("/api/articles", () => {
-    test("Get: 200 sends an array of topics to the client", () => {
+    test("Get: 200 sends an array of topics to the client excluding a body property in the object", () => {
         return request(app)
         .get("/api/articles")
         .expect(200)
@@ -55,7 +55,24 @@ describe("/api/articles", () => {
                 expect(typeof article.votes).toBe('number')
                 expect(typeof article.article_img_url).toBe('string')
                 expect(typeof article.comment_count).toBe('string')
+                expect(typeof article.body).toBe('undefined')
             })
+        })
+    })
+
+    test("Get: 200 sends an array of topics to the client and the object matches the shape", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+            const article = {
+            "article_id": 3,
+            "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            "author": "icellusedkars", "comment_count": "2", "created_at": "2020-11-03T09:12:00.000Z",
+            "title": "Eight pug gifs that remind me of mitch",
+            "topic": "mitch",
+            "votes": 0}
+            expect(response.body.articles[0]).toMatchObject(article);
         })
     })
 
@@ -65,8 +82,8 @@ describe("/api/articles", () => {
         .expect(200)
         .then((response) => {
             expect(response.body.articles).toBeSortedBy("created_at", {descending: true,})
+         })
     })
-})
 })
 
 
