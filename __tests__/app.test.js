@@ -3,6 +3,7 @@ const db = require("../db/connection.js")
 const seed = require("../db/seeds/seed.js")
 const testData = require("../db/data/test-data/index.js")
 const app = require("../app.js")
+const endPoints = require("../endpoints")
 
 afterAll(() => {
     return db.end();
@@ -18,14 +19,7 @@ describe("/api", () => {
         .get("/api")
         .expect(200)
         .then((response) => {
-            expect(response.body["GET /api"]).toEqual({"description": "serves up a json representation of all the available endpoints of the api"})
-            expect(response.body["GET /api/topics"]).toEqual({
-                "description": "serves an array of all topics",
-                "queries": [],
-                "exampleResponse": {
-                  "topics": [{ "slug": "football", "description": "Footie!" }]
-                }
-              })
+            expect(response.body.apiEndPoints).toEqual(endPoints)
         })
     })
 })
@@ -44,6 +38,54 @@ describe("/api/topics", () => {
         })
     })
 })
+
+describe("/api/articles", () => {
+    test("Get: 200 sends an array of topics to the client excluding a body property in the object", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+            expect(response.body.articles.length).toBe(13);
+            response.body.articles.forEach((article) => {
+                expect(typeof article.author).toBe('string')
+                expect(typeof article.title).toBe('string')
+                expect(typeof article.article_id).toBe('number')
+                expect(typeof article.topic).toBe('string')
+                expect(typeof article.created_at).toBe('string')
+                expect(typeof article.votes).toBe('number')
+                expect(typeof article.article_img_url).toBe('string')
+                expect(typeof article.comment_count).toBe('string')
+                expect(typeof article.body).toBe('undefined')
+            })
+        })
+    })
+
+    test("Get: 200 sends an array of topics to the client and the object matches the shape", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+            const article = {
+            "article_id": 3,
+            "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            "author": "icellusedkars", "comment_count": "2", "created_at": "2020-11-03T09:12:00.000Z",
+            "title": "Eight pug gifs that remind me of mitch",
+            "topic": "mitch",
+            "votes": 0}
+            expect(response.body.articles[0]).toMatchObject(article);
+        })
+    })
+
+    test("Get: 200 sends an array of topics sorted by date created in descending order", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((response) => {
+            expect(response.body.articles).toBeSortedBy("created_at", {descending: true,})
+         })
+    })
+})
+
 
 describe("/api/articles/:article_id", () => {
     test("Get: 200 sends an object with the correct properties", () => {
