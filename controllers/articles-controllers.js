@@ -1,9 +1,15 @@
-const { selectArticleById, selectCommentsByArticleId } = require("../models/articles-models");
 const { checkExists } = require("../utlis");
+const { selectArticlesById, selectArticle, selectCommentsByArticleId } = require("../models/articles-models");
 
-exports.getArticleById = (req, res, next) => {
+exports.getArticle = (req, res, next) => {
+    selectArticle().then((articles) => {
+        res.status(200).send({articles})
+    })
+}
+
+exports.getArticlesById = (req, res, next) => {
     const {article_id} = req.params;
-    selectArticleById(article_id)
+    selectArticlesById(article_id)
     .then((article) => {
         res.status(200).send({article});
     }).catch((err) => {
