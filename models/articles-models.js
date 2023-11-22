@@ -45,6 +45,9 @@ exports.insertNewComment = (field, article_id) => {
       [field.body, field.username, article_id]
     )
     .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      }
       return result.rows[0];
     });
 };

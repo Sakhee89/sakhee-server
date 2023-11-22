@@ -275,7 +275,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 
-  test("Post: 400 adds a new comment to the db where the foreign key doesnt exist", () => {
+  test("Post: 422 adds a new comment to the db where the foreign key doesnt exist", () => {
     const newComment = {
       username: "doesnt exist",
       body: "always happy",
@@ -283,9 +283,23 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
-      .expect(400)
+      .expect(422)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad request");
+        expect(response.body.msg).toBe("Unprocessable Entity");
+      });
+  });
+
+  test("Post: 422 sends an appropriate status error message when given a valid post but non-existent id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "always happy",
+    };
+    return request(app)
+      .post("/api/articles/399/comments")
+      .send(newComment)
+      .expect(422)
+      .then((response) => {
+        expect(response.body.msg).toBe("Unprocessable Entity");
       });
   });
 });
