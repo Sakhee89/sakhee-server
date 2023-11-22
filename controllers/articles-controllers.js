@@ -4,7 +4,7 @@ const {
   selectArticle,
   selectCommentsByArticleId,
   updateArticleById,
-  insertNewComment,
+  insertNewCommentByArticleId,
 } = require("../models/articles-models");
 
 exports.getArticle = (req, res, next) => {
@@ -64,7 +64,7 @@ exports.postCommentByArticleId = (req, res, next) => {
       .status(400)
       .send({ msg: "body and username are required fields." });
   }
-  insertNewComment(field, article_id)
+  insertNewCommentByArticleId(field, article_id)
     .then((newComment) => {
       res.status(201).send({ newComment });
     })
