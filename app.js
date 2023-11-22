@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { getTopics } = require("./controllers/topics-controllers");
+
 const {
   getArticlesById,
   getArticle,
@@ -10,6 +11,8 @@ const {
 } = require("./controllers/articles-controllers");
 
 const { getApi } = require("./controllers/api-controllers");
+
+const { deleteCommentById } = require("./controllers/comments-controllers");
 
 const app = express();
 
@@ -28,6 +31,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.patch("/api/articles/:article_id", patchArticleById);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, req, res, next) => {
   if (err.status) {
