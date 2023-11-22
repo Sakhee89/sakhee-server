@@ -199,6 +199,15 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 
+  test("Get: 200 sends back an empty array to the client, when article id exist, but there is no comments for the id", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toEqual([]);
+      });
+  });
+
   test("Get: 400 sends an appropriate status error message when given an invalid id", () => {
     return request(app)
       .get("/api/articles/not-an-id/comments")
@@ -208,12 +217,103 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 
-  test("Get: 200 sends back an empty array to the client, when article id exist, but there is no comments for the id", () => {
+  test("Post: 201 inserts a new comment to the comments table and returns the created comment to the client", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "always happy",
+    };
     return request(app)
-      .get("/api/articles/2/comments")
-      .expect(200)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
       .then((response) => {
-        expect(response.body.comments).toEqual([]);
+        expect(response.body.newComment).toMatchObject({
+          comment_id: 19,
+          body: "always happy",
+          article_id: 1,
+          author: "rogersop",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("Post: 400 sends an appropriate status and error message when field is missing", () => {
+    const newComment = {
+      username: "rogersop",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "body and username are required fields."
+        );
+      });
+  });
+
+  test("Post: 201 inserts a new comment to the comments table and returns the created comment to the client, when extra field is provided", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "always happy",
+      user: "me",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.newComment).toMatchObject({
+          comment_id: 19,
+          body: "always happy",
+          article_id: 1,
+          author: "rogersop",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+      });
+  });
+
+  test("Post: 404 adds a new comment to the db where the foreign key doesnt exist", () => {
+    const newComment = {
+      username: "doesnt exist",
+      body: "always happy",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("Post: 404 sends an appropriate status error message when given a valid post but non-existent id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "always happy",
+    };
+    return request(app)
+      .post("/api/articles/399/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("Post: 400 sends an appropriate status error message when given an invalid id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "always happy",
+    };
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
