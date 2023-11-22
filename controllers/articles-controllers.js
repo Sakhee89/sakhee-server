@@ -3,6 +3,7 @@ const {
   selectArticlesById,
   selectArticle,
   selectCommentsByArticleId,
+  updateArticleById,
   insertNewComment,
 } = require("../models/articles-models");
 
@@ -26,16 +27,28 @@ exports.getArticlesById = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
-  const articlePromises = [selectCommentsByArticleId(article_id)];
+  checkExists("articles", "article_id", article_id)
+    .then(() => {
+      selectCommentsByArticleId(article_id)
+        .then((comments) => {
+          res.status(200).send({ comments });
+        })
+        .catch((err) => {
+          next(err);
+        });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
-  if (article_id) {
-    articlePromises.push(checkExists("articles", "article_id", article_id));
-  }
+exports.patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
 
-  Promise.all(articlePromises)
-    .then((resolvedPromises) => {
-      const comments = resolvedPromises[0];
-      res.status(200).send({ comments });
+  updateArticleById(article_id, inc_votes)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch((err) => {
       next(err);

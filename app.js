@@ -1,11 +1,11 @@
 const express = require("express");
 
 const { getTopics } = require("./controllers/topics-controllers");
-
 const {
   getArticlesById,
   getArticle,
   getCommentsByArticleId,
+  patchArticleById,
   postCommentByArticleId,
 } = require("./controllers/articles-controllers");
 
@@ -24,6 +24,8 @@ app.get("/api/articles", getArticle);
 app.get(`/api/articles/:article_id`, getArticlesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.patch("/api/articles/:article_id", patchArticleById);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
