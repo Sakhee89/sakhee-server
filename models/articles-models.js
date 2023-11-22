@@ -51,7 +51,7 @@ exports.updateArticleById = (article_id, inc_votes) => {
     });
 };
 
-exports.insertNewComment = (field, article_id) => {
+exports.insertNewCommentByArticleId = (field, article_id) => {
   return db
     .query(
       `INSERT INTO comments (body, votes, author, article_id, created_at)
