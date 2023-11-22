@@ -387,3 +387,19 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("/api/users", () => {
+  test("Get: 200 sends an array of users to the client", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users.length).toBe(4);
+        response.body.users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+});
