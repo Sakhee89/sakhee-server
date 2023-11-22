@@ -50,3 +50,16 @@ exports.updateArticleById = (article_id, inc_votes) => {
       return result.rows[0];
     });
 };
+
+exports.insertNewComment = (field, article_id) => {
+  return db
+    .query(
+      `INSERT INTO comments (body, votes, author, article_id, created_at)
+        VALUES
+        ($1, DEFAULT, $2, $3, DEFAULT) RETURNING *;`,
+      [field.body, field.username, article_id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
