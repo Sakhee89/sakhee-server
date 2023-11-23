@@ -1,17 +1,37 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (query) => {
+exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   const queryValues = [];
+
   let queryString =
     "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
-  if (query.topic) {
-    queryValues.push(query.topic);
+  const sortByWhiteList = [
+    "title",
+    "article_id",
+    "author",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "topic",
+  ];
+
+  const orderWhiteList = ["asc", "desc"];
+
+  if (sort_by && !sortByWhiteList.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  if (order && !orderWhiteList.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  if (topic) {
+    queryValues.push(topic);
     queryString += "WHERE topic = $1 ";
   }
 
-  queryString +=
-    "GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+  queryString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
 
   return db.query(queryString, queryValues).then((result) => {
     return result.rows;
@@ -23,7 +43,7 @@ exports.selectArticlesById = (article_id) => {
 
   return db.query(queryString, [article_id]).then((result) => {
     if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "article does not exist" });
+      return Promise.reject({ status: 404, msg: "Article does not exist" });
     }
     return result.rows[0];
   });
@@ -49,7 +69,7 @@ exports.updateArticleById = (article_id, inc_votes) => {
     )
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "article does not exist" });
+        return Promise.reject({ status: 404, msg: "Article does not exist" });
       }
       return result.rows[0];
     });
