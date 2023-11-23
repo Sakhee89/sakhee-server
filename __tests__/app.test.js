@@ -40,7 +40,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test("Get: 200 sends an array of topics to the client excluding a body property in the object", () => {
+  test("Get: 200 sends an array of articles to the client excluding a body property in the object", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -60,7 +60,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of topics to the client and the object matches the shape", () => {
+  test("Get: 200 sends an array of articles to the client and the object matches the shape", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -80,7 +80,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of topics sorted by date created in descending order", () => {
+  test("Get: 200 sends an array of articles sorted by date created in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -93,7 +93,7 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("Get: 200 sends an object with the correct properties", () => {
+  test("Get: 200 sends an article object with the correct properties", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -112,7 +112,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 200 sends an object with the correct properties", () => {
+  test("Get: 200 sends an article object with the correct properties", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
@@ -408,6 +408,22 @@ describe("/api/comments/:comment_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/users", () => {
+  test("Get: 200 sends an array of users to the client", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users.length).toBe(4);
+        response.body.users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
       });
   });
 });

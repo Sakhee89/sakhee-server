@@ -12,6 +12,8 @@ const {
 
 const { getApi } = require("./controllers/api-controllers");
 
+const { getUsers } = require("./controllers/users-controllers");
+
 const { deleteCommentById } = require("./controllers/comments-controllers");
 
 const app = express();
@@ -21,6 +23,8 @@ app.use(express.json());
 app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/users", getUsers);
 
 app.get("/api/articles", getArticle);
 
