@@ -1,17 +1,16 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (query) => {
+exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   const queryValues = [];
   let queryString =
     "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
-  if (query.topic) {
-    queryValues.push(query.topic);
+  if (topic) {
+    queryValues.push(topic);
     queryString += "WHERE topic = $1 ";
   }
 
-  queryString +=
-    "GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+  queryString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
 
   return db.query(queryString, queryValues).then((result) => {
     return result.rows;

@@ -8,11 +8,11 @@ const {
 } = require("../models/articles-models");
 
 exports.getArticles = (req, res, next) => {
-  const query = req.query;
-  const articlePromises = [selectArticles(query)];
+  const { topic, sort_by, order } = req.query;
+  const articlePromises = [selectArticles(topic, sort_by, order)];
 
-  if (query.topic) {
-    articlePromises.push(checkExists("topics", "slug", query.topic));
+  if (topic) {
+    articlePromises.push(checkExists("topics", "slug", topic));
   }
 
   Promise.all(articlePromises)

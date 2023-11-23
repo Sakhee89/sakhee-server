@@ -91,7 +91,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of articles queried by the specified topic ", () => {
+  test("Get: 200 sends an array of articles queried by the specified topic", () => {
     const returnedArticles = [
       {
         author: "rogersop",
@@ -113,7 +113,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of articles queried by the specified topic ", () => {
+  test("Get: 200 sends an array of articles queried by the specified topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
@@ -148,6 +148,17 @@ describe("/api/articles", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("Get: 200 sends an array of articles sorted by the coluumn", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("author", {
+          descending: true,
+        });
       });
   });
 });
