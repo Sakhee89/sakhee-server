@@ -163,7 +163,6 @@ describe("/api/articles/:article_id", () => {
           title: "Living in the shadow of a great man",
           topic: "mitch",
           author: "butter_bridge",
-          body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z",
           votes: 100,
           article_img_url:
@@ -182,7 +181,6 @@ describe("/api/articles/:article_id", () => {
           title: "Eight pug gifs that remind me of mitch",
           topic: "mitch",
           author: "icellusedkars",
-          body: "some gifs",
           created_at: "2020-11-03T09:12:00.000Z",
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -208,6 +206,24 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
+  test("Get: 200 has comment_count in the object property", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article.comment_count).toBe("11");
+      });
+  });
+
+  test("Get: 200 has comment_count of '0', if there is no comments for the article", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article.comment_count).toBe("0");
+      });
+  });
+
   test("Get: 200 the request was successful and it sends back the updated article with an increased vote of 1", () => {
     return request(app)
       .patch("/api/articles/1")
@@ -219,7 +235,6 @@ describe("/api/articles/:article_id", () => {
           title: "Living in the shadow of a great man",
           topic: "mitch",
           author: "butter_bridge",
-          body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z",
           votes: 101,
           article_img_url:
@@ -239,7 +254,6 @@ describe("/api/articles/:article_id", () => {
           title: "Living in the shadow of a great man",
           topic: "mitch",
           author: "butter_bridge",
-          body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z",
           votes: -10,
           article_img_url:
