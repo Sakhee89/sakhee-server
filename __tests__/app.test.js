@@ -40,7 +40,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test("Get: 200 sends an array of topics to the client excluding a body property in the object", () => {
+  test("Get: 200 sends an array of articles to the client excluding a body property in the object", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -60,7 +60,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of topics to the client and the object matches the shape", () => {
+  test("Get: 200 sends an array of articles to the client and the object matches the shape", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -80,7 +80,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of topics sorted by date created in descending order", () => {
+  test("Get: 200 sends an array of articles sorted by date created in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -90,10 +90,50 @@ describe("/api/articles", () => {
         });
       });
   });
+
+  test("Get: 200 sends an array of articles queried by the specified topic ", () => {
+    const returnedArticles = [
+      {
+        author: "rogersop",
+        title: "UNCOVERED: catspiracy to bring down democracy",
+        article_id: 5,
+        topic: "cats",
+        created_at: "2020-08-03T13:14:00.000Z",
+        votes: 0,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        comment_count: "2",
+      },
+    ];
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual(returnedArticles);
+      });
+  });
+
+  test("Get: 200 sends an empty array when a topic that exist is passed but the article does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual([]);
+      });
+  });
+
+  test("Get: 404 sends an appropriate status and error message when given a a topic that does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=no-such-topic")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
 });
 
 describe("/api/articles/:article_id", () => {
-  test("Get: 200 sends an object with the correct properties", () => {
+  test("Get: 200 sends an article object with the correct properties", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -112,7 +152,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 200 sends an object with the correct properties", () => {
+  test("Get: 200 sends an article object with the correct properties", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
