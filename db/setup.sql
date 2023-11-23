@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS nc_news_test;
-DROP DATABASE IF EXISTS nc_news;
+DROP DATABASE IF EXISTS sakhee_own_database_test;
+DROP DATABASE IF EXISTS sakhee_own_database;
 
-CREATE DATABASE nc_news_test;
-CREATE DATABASE nc_news;
+CREATE DATABASE sakhee_own_database_test;
+CREATE DATABASE sakhee_own_database;
