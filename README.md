@@ -30,7 +30,7 @@ To run test, use npm run test
 ## Environment variables
 
 In order to connect to the database you need two files on the root level, one called called .env.test, and the other .env.development.
-In each files add PGDATABASE=sakhee_own_database_test for test and PGDATABASE=sakhee_own_database for development
+In each file add PGDATABASE=sakhee_own_database_test for test and PGDATABASE=sakhee_own_database for development
 
 ## Versions
 
