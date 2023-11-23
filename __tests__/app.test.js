@@ -151,7 +151,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of articles sorted by the coluumn", () => {
+  test("Get: 200 sends an array of articles sorted by author and default in descending order", () => {
     return request(app)
       .get("/api/articles?sort_by=author")
       .expect(200)
@@ -159,6 +159,46 @@ describe("/api/articles", () => {
         expect(response.body.articles).toBeSortedBy("author", {
           descending: true,
         });
+      });
+  });
+
+  test("Get: 200 sends an array of articles sorted by the article_id and default in descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("article_id", {
+          descending: true,
+        });
+      });
+  });
+
+  test("Get: 200 sends an array of articles sorted by the title and default in descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("title", {
+          descending: true,
+        });
+      });
+  });
+
+  test("Get: 200 sends an array of articles sorted by created_at as default in ascending order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("created_at");
+      });
+  });
+
+  test("Get: 200 sends an array of articles sorted by title and in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("title");
       });
   });
 });
