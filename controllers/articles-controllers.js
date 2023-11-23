@@ -1,16 +1,28 @@
 const { checkExists } = require("../utlis");
 const {
   selectArticlesById,
-  selectArticle,
+  selectArticles,
   selectCommentsByArticleId,
   updateArticleById,
   insertNewCommentByArticleId,
 } = require("../models/articles-models");
 
-exports.getArticle = (req, res, next) => {
-  selectArticle().then((articles) => {
-    res.status(200).send({ articles });
-  });
+exports.getArticles = (req, res, next) => {
+  const query = req.query;
+  const articlePromises = [selectArticles(query)];
+
+  if (query.topic) {
+    articlePromises.push(checkExists("topics", "slug", query.topic));
+  }
+
+  Promise.all(articlePromises)
+    .then((resolvedPromises) => {
+      const articles = resolvedPromises[0];
+      return res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getArticlesById = (req, res, next) => {

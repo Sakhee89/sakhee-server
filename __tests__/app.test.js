@@ -90,6 +90,66 @@ describe("/api/articles", () => {
         });
       });
   });
+
+  test("Get: 200 sends an array of articles queried by the specified topic ", () => {
+    const returnedArticles = [
+      {
+        author: "rogersop",
+        title: "UNCOVERED: catspiracy to bring down democracy",
+        article_id: 5,
+        topic: "cats",
+        created_at: "2020-08-03T13:14:00.000Z",
+        votes: 0,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        comment_count: "2",
+      },
+    ];
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toMatchObject(returnedArticles);
+      });
+  });
+
+  test("Get: 200 sends an array of articles queried by the specified topic ", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(12);
+        response.body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+          expect(typeof article.body).toBe("undefined");
+        });
+      });
+  });
+
+  test("Get: 200 sends an empty array when a topic that exist is passed but the article does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual([]);
+      });
+  });
+
+  test("Get: 404 sends an appropriate status and error message when given a a topic that does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=no-such-topic")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
 });
 
 describe("/api/articles/:article_id", () => {

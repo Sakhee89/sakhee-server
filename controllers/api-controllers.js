@@ -1,5 +1,5 @@
-const apiEndPoints = require("../endpoints.json")
+const apiEndPoints = require("../endpoints.json");
 
-exports.getApi = (req, res) => {
-    res.status(200).send({apiEndPoints})
-}
+exports.getApis = (req, res) => {
+  res.status(200).send({ apiEndPoints });
+};
