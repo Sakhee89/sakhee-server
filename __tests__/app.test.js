@@ -147,7 +147,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=no-such-topic")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.body.msg).toBe("Not found");
       });
   });
 
@@ -201,6 +201,33 @@ describe("/api/articles", () => {
         expect(response.body.articles).toBeSortedBy("title");
       });
   });
+
+  test("Get: 400 sends an appropriate status and error message when given a a order query that does not exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=no-such-option")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when given a a sort by query that does not exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=no_such_option&order=asc")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 200 sends an array back when given valid sort by, order by and filter", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=article_id&order=asc")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("article_id");
+      });
+  });
 });
 
 describe("/api/articles/:article_id", () => {
@@ -244,7 +271,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/888")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("article does not exist");
+        expect(response.body.msg).toBe("Article does not exist");
       });
   });
 
@@ -339,7 +366,7 @@ describe("/api/articles/:article_id", () => {
       .send({ inc_votes: 1 })
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("article does not exist");
+        expect(response.body.msg).toBe("Article does not exist");
       });
   });
 });
@@ -390,7 +417,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/399/comments")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.body.msg).toBe("Not found");
       });
   });
 
@@ -443,7 +470,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe(
-          "body and username are required fields."
+          "Body and username are required fields."
         );
       });
   });
@@ -480,7 +507,7 @@ describe("/api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.body.msg).toBe("Not found");
       });
   });
 
@@ -494,7 +521,7 @@ describe("/api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.body.msg).toBe("Not found");
       });
   });
 
@@ -523,7 +550,7 @@ describe("/api/comments/:comment_id", () => {
       .delete("/api/comments/999")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("comment does not exist");
+        expect(response.body.msg).toBe("Comment does not exist");
       });
   });
 

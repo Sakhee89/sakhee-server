@@ -39,15 +39,15 @@ exports.getArticlesById = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
-  checkExists("articles", "article_id", article_id)
-    .then(() => {
-      selectCommentsByArticleId(article_id)
-        .then((comments) => {
-          res.status(200).send({ comments });
-        })
-        .catch((err) => {
-          next(err);
-        });
+  const articlePromises = [
+    selectCommentsByArticleId(article_id),
+    checkExists("articles", "article_id", article_id),
+  ];
+
+  Promise.all(articlePromises)
+    .then((resolvedPromises) => {
+      const comments = resolvedPromises[0];
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
@@ -74,7 +74,7 @@ exports.postCommentByArticleId = (req, res, next) => {
   if (!field.body || !field.username) {
     return res
       .status(400)
-      .send({ msg: "body and username are required fields." });
+      .send({ msg: "Body and username are required fields." });
   }
   insertNewCommentByArticleId(field, article_id)
     .then((newComment) => {
