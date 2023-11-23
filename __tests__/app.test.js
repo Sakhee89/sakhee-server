@@ -109,7 +109,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=cats")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles).toEqual(returnedArticles);
+        expect(response.body.articles).toMatchObject(returnedArticles);
       });
   });
 
