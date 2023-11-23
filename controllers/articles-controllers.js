@@ -1,14 +1,14 @@
 const { checkExists } = require("../utlis");
 const {
   selectArticlesById,
-  selectArticle,
+  selectArticles,
   selectCommentsByArticleId,
   updateArticleById,
   insertNewCommentByArticleId,
 } = require("../models/articles-models");
 
-exports.getArticle = (req, res, next) => {
-  selectArticle().then((articles) => {
+exports.getArticles = (req, res, next) => {
+  selectArticles().then((articles) => {
     res.status(200).send({ articles });
   });
 };
