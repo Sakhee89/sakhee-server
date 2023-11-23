@@ -9,7 +9,7 @@ This is a news site that has a variety of articles. It can accept comments from 
 ## Setup
 
 To clone the repo use git clone https://github.com/Sakhee89/sakhee-server
-Next install the below dependencies and devDependencies:
+Next install the below dependencies and devDependencies by using the command npm install:
 
 "devDependencies": {
 "husky": "^8.0.2",
