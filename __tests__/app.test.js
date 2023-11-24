@@ -545,7 +545,7 @@ describe("/api/comments/:comment_id", () => {
     return request(app).delete("/api/comments/10").expect(204);
   });
 
-  test("DELETE:404 responds with an appropriate status and error message when given a non-existent id", () => {
+  test("DELETE: 404 responds with an appropriate status and error message when given a non-existent id", () => {
     return request(app)
       .delete("/api/comments/999")
       .expect(404)
@@ -554,9 +554,76 @@ describe("/api/comments/:comment_id", () => {
       });
   });
 
-  test("DELETE:400 responds with an appropriate status and error message when given an invalid id", () => {
+  test("DELETE: 400 responds with an appropriate status and error message when given an invalid id", () => {
     return request(app)
       .delete("/api/comments/no-an-id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("PATCH: 200 the request was successful and it sends back the updated comment with an increased votes of 1", () => {
+    const changeVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(changeVotes)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 17,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+
+  test("PATCH: 200 the request was successful and it sends back the updated comment with a decreased votes of 20", () => {
+    const changeVotes = { inc_votes: -20 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(changeVotes)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: -4,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+
+  test("PATCH: 404 responds with an appropriate status and error message when given an id that does not exist and valid comment format", () => {
+    const changeVotes = { inc_votes: 20 };
+    return request(app)
+      .patch("/api/comments/199")
+      .send(changeVotes)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Comment does not exist");
+      });
+  });
+
+  test("PATCH: 400 responds with an appropriate status and error message when given an id that exist and invalid comment format", () => {
+    const changeVotes = { inc_votes: "12+" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(changeVotes)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("PATCH: 400 responds with an appropriate status and error message when given an invalid id and valid comment format", () => {
+    const changeVotes = { inc_votes: 12 };
+    return request(app)
+      .patch("/api/comments/not-valid")
+      .send(changeVotes)
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
