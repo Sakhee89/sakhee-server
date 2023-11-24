@@ -38,7 +38,6 @@ exports.getArticlesById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-
   const articlePromises = [
     selectCommentsByArticleId(article_id),
     checkExists("articles", "article_id", article_id),
