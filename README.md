@@ -21,4 +21,4 @@ In each file add PGDATABASE=<your_database_test> to .env.test and PGDATABASE=<yo
 
 ## Versions
 
-This API is supported with Node 9.8.0
+This API is supported with Node version 9.8.0 and Postgres version 8.7.3
