@@ -24,6 +24,17 @@ describe("/api", () => {
   });
 });
 
+describe("/api/not-a-path", () => {
+  test("Get: sends an appropriate status and error message when given a path that does not exist", () => {
+    return request(app)
+      .get("/api/not-a-path")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+});
+
 describe("/api/topics", () => {
   test("Get: 200 sends an array of topics to the client", () => {
     return request(app)

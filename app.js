@@ -4,13 +4,16 @@ const {
   handleCustomErrors,
   handlePsqlErrors,
   handleServerErrors,
-} = require("./errors");
+  handleInvalidRouteErrors,
+} = require("./controllers/errors-controllers");
 
 const app = express();
 
 app.use(express.json());
 
 app.use("/api", apiRouter);
+
+app.get("/api/*", handleInvalidRouteErrors);
 
 app.use(handleCustomErrors);
 
