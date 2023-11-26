@@ -4,7 +4,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   const queryValues = [];
 
   let queryString =
-    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
+    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
 
   const sortByWhiteList = [
     "title",
@@ -39,7 +39,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
 };
 
 exports.selectArticlesById = (article_id) => {
-  let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id ORDER BY articles.created_at DESC;`;
+  let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id ORDER BY articles.created_at DESC;`;
 
   return db.query(queryString, [article_id]).then((result) => {
     if (result.rows.length === 0) {
@@ -82,6 +82,24 @@ exports.insertNewCommentByArticleId = (field, article_id) => {
         VALUES
         ($1, DEFAULT, $2, $3, DEFAULT) RETURNING *;`,
       [field.body, field.username, article_id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
+exports.insertArticle = (newArticle) => {
+  const { title, topic, author, body } = newArticle;
+  let article_img_url =
+    "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700";
+  if (newArticle.article_img_url) article_img_url = newArticle.article_img_url;
+
+  return db
+    .query(
+      `INSERT INTO articles (title, topic, author, body, article_img_url)
+  VALUES
+  ($1, $2, $3, $4, $5) RETURNING *;`,
+      [title, topic, author, body, article_img_url]
     )
     .then((result) => {
       return result.rows[0];
