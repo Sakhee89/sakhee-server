@@ -54,7 +54,7 @@ describe("/api/articles", () => {
           expect(typeof article.created_at).toBe("string");
           expect(typeof article.votes).toBe("number");
           expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
           expect(typeof article.body).toBe("undefined");
         });
       });
@@ -70,7 +70,7 @@ describe("/api/articles", () => {
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           author: "icellusedkars",
-          comment_count: "2",
+          comment_count: 2,
           created_at: "2020-11-03T09:12:00.000Z",
           title: "Eight pug gifs that remind me of mitch",
           topic: "mitch",
@@ -102,7 +102,7 @@ describe("/api/articles", () => {
         votes: 0,
         article_img_url:
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-        comment_count: "2",
+        comment_count: 2,
       },
     ];
     return request(app)
@@ -127,7 +127,7 @@ describe("/api/articles", () => {
           expect(typeof article.created_at).toBe("string");
           expect(typeof article.votes).toBe("number");
           expect(typeof article.article_img_url).toBe("string");
-          expect(typeof article.comment_count).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
           expect(typeof article.body).toBe("undefined");
         });
       });
@@ -142,7 +142,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 404 sends an appropriate status and error message when given a a topic that does not exist", () => {
+  test("Get: 404 sends an appropriate status and error message when given a topic that does not exist", () => {
     return request(app)
       .get("/api/articles?topic=no-such-topic")
       .expect(404)
@@ -202,7 +202,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 400 sends an appropriate status and error message when given a a order query that does not exist", () => {
+  test("Get: 400 sends an appropriate status and error message when given a order query that does not exist", () => {
     return request(app)
       .get("/api/articles?sort_by=title&order=no-such-option")
       .expect(400)
@@ -211,7 +211,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 400 sends an appropriate status and error message when given a a sort by query that does not exist", () => {
+  test("Get: 400 sends an appropriate status and error message when given a sort by query that does not exist", () => {
     return request(app)
       .get("/api/articles?sort_by=no_such_option&order=asc")
       .expect(400)
@@ -226,6 +226,116 @@ describe("/api/articles", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.articles).toBeSortedBy("article_id");
+      });
+  });
+
+  test("POST: 201 inserts a new article to the articles table and returns the created article to the client", () => {
+    const newArticle = {
+      title: "UNCOVERED: Unidentified Object spotted",
+      topic: "mitch",
+      author: "rogersop",
+      body: "Fallen hard from the heavens!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    const returnedArticle = {
+      article_id: 14,
+      title: "UNCOVERED: Unidentified Object spotted",
+      topic: "mitch",
+      author: "rogersop",
+      created_at: expect.any(String),
+      votes: 0,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      comment_count: 0,
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.article).toMatchObject(returnedArticle);
+      });
+  });
+
+  test("POST: 201 inserts a new article to the articles table and returns the created article to the client when article_img_url is missing, and check that a body doesnt exist", () => {
+    const newArticle = {
+      title: "UNCOVERED: Unidentified Object spotted",
+      topic: "mitch",
+      author: "rogersop",
+      body: "Fallen hard from the heavens!",
+    };
+    const returnedArticle = {
+      article_id: 14,
+      title: "UNCOVERED: Unidentified Object spotted",
+      topic: "mitch",
+      author: "rogersop",
+      created_at: expect.any(String),
+      votes: 0,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      comment_count: 0,
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.article).toMatchObject(returnedArticle);
+        expect(response.body.article.body).toBe(undefined);
+      });
+  });
+
+  test("POST: 400 sends an appropriate status and error message when given a invalid body", () => {
+    const newArticle = {
+      topic: "mitch",
+      author: "rogersop",
+      body: "Fallen hard from the heavens!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("POST: 404 sends an appropriate status and error message when given a topic that does not exist", () => {
+    const newArticle = {
+      title: "UNCOVERED: Unidentified Object spotted",
+      topic: "does not exist",
+      author: "rogersop",
+      body: "Fallen hard from the heavens!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+
+  test("POST: 404 sends an appropriate status and error message when given a author that does not exist", () => {
+    const newArticle = {
+      title: "UNCOVERED: Unidentified Object spotted",
+      topic: "mitch",
+      author: "does not exist",
+      body: "Fallen hard from the heavens!",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
       });
   });
 });
@@ -289,16 +399,16 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then((response) => {
-        expect(response.body.article.comment_count).toBe("11");
+        expect(response.body.article.comment_count).toBe(11);
       });
   });
 
-  test("Get: 200 has comment_count of '0', if there is no comments for the article", () => {
+  test("Get: 200 has comment_count of 0, if there is no comments for the article", () => {
     return request(app)
       .get("/api/articles/2")
       .expect(200)
       .then((response) => {
-        expect(response.body.article.comment_count).toBe("0");
+        expect(response.body.article.comment_count).toBe(0);
       });
   });
 
