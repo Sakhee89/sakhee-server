@@ -1,10 +1,15 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
-  const queryValues = [];
+exports.selectArticles = (
+  topic,
+  sort_by = "created_at",
+  order = "desc",
+  limit = 10,
+  p = 1
+) => {
+  const queryValues = [limit, (p - 1) * limit];
 
-  let queryString =
-    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id ";
+  let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, CAST(COUNT(comments.comment_id) AS INT) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id `;
 
   const sortByWhiteList = [
     "title",
@@ -28,10 +33,10 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
 
   if (topic) {
     queryValues.push(topic);
-    queryString += "WHERE topic = $1 ";
+    queryString += `WHERE topic = $3 `;
   }
 
-  queryString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
+  queryString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order} LIMIT $1 OFFSET $2`;
 
   return db.query(queryString, queryValues).then((result) => {
     return result.rows;

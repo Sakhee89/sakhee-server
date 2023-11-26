@@ -24,6 +24,17 @@ describe("/api", () => {
   });
 });
 
+describe("/api/not-a-path", () => {
+  test("Get: sends an appropriate status and error message when given a path that does not exist", () => {
+    return request(app)
+      .get("/api/not-a-path")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+});
+
 describe("/api/topics", () => {
   test("Get: 200 sends an array of topics to the client", () => {
     return request(app)
@@ -40,12 +51,12 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test("Get: 200 sends an array of articles to the client excluding a body property in the object", () => {
+  test("Get: 200 sends an array of articles to the client excluding a body property in the object with a default limit of 10", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(13);
+        expect(response.body.articles.length).toBe(10);
         response.body.articles.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
@@ -57,26 +68,6 @@ describe("/api/articles", () => {
           expect(typeof article.comment_count).toBe("number");
           expect(typeof article.body).toBe("undefined");
         });
-      });
-  });
-
-  test("Get: 200 sends an array of articles to the client and the object matches the shape", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then((response) => {
-        const article = {
-          article_id: 3,
-          article_img_url:
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          author: "icellusedkars",
-          comment_count: 2,
-          created_at: "2020-11-03T09:12:00.000Z",
-          title: "Eight pug gifs that remind me of mitch",
-          topic: "mitch",
-          votes: 0,
-        };
-        expect(response.body.articles[0]).toMatchObject(article);
       });
   });
 
@@ -113,12 +104,12 @@ describe("/api/articles", () => {
       });
   });
 
-  test("Get: 200 sends an array of articles queried by the specified topic", () => {
+  test("Get: 200 sends an array of articles queried by the specified topics with a default limit of 10", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(12);
+        expect(response.body.articles.length).toBe(10);
         response.body.articles.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
@@ -226,6 +217,189 @@ describe("/api/articles", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.articles).toBeSortedBy("article_id");
+      });
+  });
+
+  test("Get: 200 sends an array with only 5 results when using limit of 5", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(5);
+        response.body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(typeof article.body).toBe("undefined");
+        });
+      });
+  });
+
+  test("Get: 200 sends an array with only 5 results when using limit of 5 and returns the correct keys", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(5);
+        response.body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(typeof article.body).toBe("undefined");
+        });
+      });
+  });
+
+  test("Get: 200 sends an array with all the results when given a limit greater than the total results", () => {
+    return request(app)
+      .get("/api/articles?limit=20")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        response.body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(typeof article.body).toBe("undefined");
+        });
+      });
+  });
+
+  test("Get: 200 sends an array with all the results when given a topic query and limit", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&limit=3")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(3);
+        response.body.articles.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(typeof article.body).toBe("undefined");
+        });
+      });
+  });
+
+  test("Get: 200 sends an array with all the results when given a sort by query and limit", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&limit=3")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(3);
+        expect(response.body.articles).toBeSortedBy("title", {
+          descending: true,
+        });
+      });
+  });
+
+  test("Get: 200 sends an array with all the results when given a sort by query, filter query and limit", () => {
+    return request(app)
+      .get("/api/articles?filter=mitch&sort_by=article_id&order=asc&limit=3")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(3);
+        expect(response.body.articles).toBeSortedBy("article_id");
+      });
+  });
+
+  test("Get: 200 sends an array with all the results when given a page query (p) with a default limit of 10", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc&p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(3);
+        expect(response.body.articles[0].article_id).toBe(11);
+        expect(response.body.articles[1].article_id).toBe(12);
+        expect(response.body.articles[2].article_id).toBe(13);
+      });
+  });
+
+  test("Get: 200 sends an array with all the results showing the default limit of 10 and page query (p) of 1", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(10);
+        expect(response.body.articles[0].article_id).toBe(1);
+        expect(response.body.articles[1].article_id).toBe(2);
+        expect(response.body.articles[9].article_id).toBe(10);
+      });
+  });
+
+  test("Get: 200 sends an array with all the results, when topic, sort_by, order, limit and page query used", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=article_id&order=asc&limit=3&p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(3);
+        expect(response.body.articles[0].article_id).toBe(4);
+        expect(response.body.articles[1].article_id).toBe(6);
+        expect(response.body.articles[2].article_id).toBe(7);
+      });
+  });
+
+  test("Get: 200 sends an empty array when the page query has too high", () => {
+    return request(app)
+      .get("/api/articles?p=1000")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual([]);
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when given a negative limit", () => {
+    return request(app)
+      .get("/api/articles?limit=-20")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when given a invalid limit", () => {
+    return request(app)
+      .get("/api/articles?limit=not_valid")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when given a invalid page query (p)", () => {
+    return request(app)
+      .get("/api/articles?p=invalid")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when given a negative number for page query (p)", () => {
+    return request(app)
+      .get("/api/articles?p=-4")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 
