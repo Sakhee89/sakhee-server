@@ -56,11 +56,11 @@ exports.selectArticlesById = (article_id) => {
   });
 };
 
-exports.selectCommentsByArticleId = (article_id) => {
+exports.selectCommentsByArticleId = (article_id, limit = 10, p = 1) => {
   return db
     .query(
-      `SELECT * FROM comments WHERE comments.article_id = $1 ORDER BY created_at DESC;`,
-      [article_id]
+      `SELECT * FROM comments WHERE comments.article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;`,
+      [article_id, limit, (p - 1) * limit]
     )
     .then((result) => {
       return result.rows;
