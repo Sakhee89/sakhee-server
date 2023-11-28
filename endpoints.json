@@ -55,7 +55,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves up an object of the article found by the id with all it's keys",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "article": {
         "author": "butter_bridge",
@@ -70,8 +70,8 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves up an array with all it's comments by article id",
-    "queries": [],
+    "description": "serves up an array with all it's comments by article id and able to query by limit and page (p)",
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "comments": [
         {
