@@ -21,6 +21,8 @@ exports.selectArticles = (
     "topic",
   ];
 
+  order = order.toLowerCase();
+
   const orderWhiteList = ["asc", "desc"];
 
   if (sort_by && !sortByWhiteList.includes(sort_by)) {

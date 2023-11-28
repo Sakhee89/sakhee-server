@@ -133,6 +133,15 @@ describe("/api/articles", () => {
       });
   });
 
+  test("Get: 404 sends an appropriate status and error message when trying to SQL inject", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch; SELECT * FROM Article RETURNING *;")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not found");
+      });
+  });
+
   test("Get: 404 sends an appropriate status and error message when given a topic that does not exist", () => {
     return request(app)
       .get("/api/articles?topic=no-such-topic")
@@ -205,6 +214,24 @@ describe("/api/articles", () => {
   test("Get: 400 sends an appropriate status and error message when given a sort by query that does not exist", () => {
     return request(app)
       .get("/api/articles?sort_by=no_such_option&order=asc")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when trying to SQL inject with sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title; SELECT * FROM articles RETURNING *;")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when trying to SQL inject with sort_by", () => {
+    return request(app)
+      .get("/api/articles?order=asc; SELECT * FROM articles RETURNING *;")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
@@ -385,6 +412,15 @@ describe("/api/articles", () => {
       });
   });
 
+  test("Get: 400 sends an appropriate status and error message when trying to sql inject by limit", () => {
+    return request(app)
+      .get("/api/articles?limit=2; SELECT * FROM articles RETURNING *;")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
   test("Get: 400 sends an appropriate status and error message when given a invalid page query (p)", () => {
     return request(app)
       .get("/api/articles?p=invalid")
@@ -397,6 +433,15 @@ describe("/api/articles", () => {
   test("Get: 400 sends an appropriate status and error message when given a negative number for page query (p)", () => {
     return request(app)
       .get("/api/articles?p=-4")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status and error message when given a negative number for page query (p)", () => {
+    return request(app)
+      .get("/api/articles?p=1; SELECT * FROM articles RETURNING *;")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
