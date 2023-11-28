@@ -101,6 +101,16 @@
       }
     }
   },
+  "POST /api/topics": {
+    "description": "inserts a new topic and returns the new topic with all its keys",
+    "queries": [],
+    "exampleResponse": {
+      "topic": {
+        "slug": "dogs",
+        "description": "big and cute"
+      }
+    }
+  },
   "PATCH /api/articles/:article_id": {
     "description": "serves up an object with all it's keys",
     "queries": [],

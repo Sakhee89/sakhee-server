@@ -25,7 +25,7 @@ describe("/api", () => {
 });
 
 describe("/api/not-a-path", () => {
-  test("Get: sends an appropriate status and error message when given a path that does not exist", () => {
+  test("Get: 404 sends an appropriate status and error message when given a path that does not exist", () => {
     return request(app)
       .get("/api/not-a-path")
       .expect(404)
@@ -46,6 +46,33 @@ describe("/api/topics", () => {
           expect(typeof topic.slug).toBe("string");
           expect(typeof topic.description).toBe("string");
         });
+      });
+  });
+
+  test("Post: 201 inserts a new topic to the topics table and returns the created topic to the client", () => {
+    const newTopic = {
+      slug: "dogs",
+      description: "big and cute",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.topic).toMatchObject(newTopic);
+      });
+  });
+
+  test("Post: 400 sends an appropriate status and error message when sending an invalid body", () => {
+    const newTopic = {
+      description: "big and cute",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
