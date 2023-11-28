@@ -658,7 +658,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 200 the request was successful and it sends back the updated article with an increased vote of 1", () => {
+  test("Patch: 200 the request was successful and it sends back the updated article with an increased vote of 1", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: 1 })
@@ -677,7 +677,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 200 the request was successful and it sends back the updated article with a decreased vote of 110", () => {
+  test("Patch: 200 the request was successful and it sends back the updated article with a decreased vote of 110", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: -110 })
@@ -696,7 +696,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 400 sends an appropriate status and error message when given an invalid body", () => {
+  test("Patch: 400 sends an appropriate status and error message when given an invalid body", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: "incorrect" })
@@ -706,7 +706,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 400 sends an appropriate status and error message when given an invalid id and valid body", () => {
+  test("Patch: 400 sends an appropriate status and error message when given an invalid id and valid body", () => {
     return request(app)
       .patch("/api/articles/not-an-article")
       .send({ inc_votes: 1 })
@@ -716,10 +716,32 @@ describe("/api/articles/:article_id", () => {
       });
   });
 
-  test("Get: 404 sends an appropriate status and error message when given a valid id and body, but the id does not exist", () => {
+  test("Patch: 404 sends an appropriate status and error message when given a valid id and body, but the id does not exist", () => {
     return request(app)
       .patch("/api/articles/9999")
       .send({ inc_votes: 1 })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article does not exist");
+      });
+  });
+
+  test("Delete: 204 deletes the specified article and sends no body back", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+
+  test("Delete: 400 sends an appropriate status and error message when given a invalid id", () => {
+    return request(app)
+      .delete("/api/articles/invalid")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Delete: 404 sends an appropriate status and error message when given an id that does not exist", () => {
+    return request(app)
+      .delete("/api/articles/127")
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Article does not exist");

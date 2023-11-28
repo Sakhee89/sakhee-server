@@ -127,6 +127,11 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes the article by id and the respective comments, and returns no body",
+    "queries": [],
+    "exampleResponse": ""
+  },
   "POST /api/articles/:article_id/comments": {
     "description": "serves up an object of the comment added of with all it's keys",
     "queries": [],
