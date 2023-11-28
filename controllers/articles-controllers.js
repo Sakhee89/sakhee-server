@@ -6,6 +6,7 @@ const {
   updateArticleById,
   insertNewCommentByArticleId,
   insertArticle,
+  removeArticleById,
 } = require("../models/articles-models");
 
 exports.getArticles = (req, res, next) => {
@@ -93,6 +94,17 @@ exports.postArticle = (req, res, next) => {
       selectArticlesById(newArticle.article_id).then((article) => {
         res.status(201).send({ article });
       });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticleById(article_id)
+    .then(() => {
+      return res.status(204).send();
     })
     .catch((err) => {
       next(err);
