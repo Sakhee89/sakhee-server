@@ -1,6 +1,6 @@
 # **Sakhee News API**
 
-The link to the [Deployed project](https://sakhee-news.onrender.com/)
+You can find the link to the deployed project [Here](https://sakhee-news.onrender.com/)
 
 ## Summary
 
@@ -8,7 +8,7 @@ This API project was developed using node.js and postgres. It has a similar func
 
 ## Installation & Setup
 
-To clone the repo use git clone [GitHub Link](https://github.com/Sakhee89/sakhee-server) to clone the project.
+To clone the repo use git clone https://github.com/Sakhee89/sakhee-server to clone the project.
 
 Next, install the dependencies and devDependencies by using the command npm install
 
