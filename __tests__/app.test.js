@@ -703,7 +703,7 @@ describe("/api/articles/:article_id", () => {
 describe("/api/articles/:article_id/comments", () => {
   test("Get: 200 sends an array of comments belonging to a single article to the client", () => {
     return request(app)
-      .get("/api/articles/1/comments")
+      .get("/api/articles/1/comments?limit=11")
       .expect(200)
       .then((response) => {
         const commentObj = {
@@ -738,6 +738,183 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
+      });
+  });
+
+  test("Get: 200 sends an array of comments of 5 when using limit query of 5 and default page of 1", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(5);
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        response.body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(1);
+        });
+      });
+  });
+
+  test("Get: 200 sends an array of all the comments when using limit query that is above the total results", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=500")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(11);
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        response.body.comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(1);
+        });
+      });
+  });
+
+  test("Get: 200 sends an array of comments of when given a page query (p) and default limit query is 10", () => {
+    const firstCommentObj = {
+      comment_id: 5,
+      body: "I hate streaming noses",
+      article_id: 1,
+      author: "icellusedkars",
+      votes: 0,
+      created_at: "2020-11-03T21:00:00.000Z",
+    };
+    const secondCommentObj = {
+      comment_id: 2,
+      body: "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+      article_id: 1,
+      author: "butter_bridge",
+      votes: 14,
+      created_at: "2020-10-31T03:03:00.000Z",
+    };
+    return request(app)
+      .get("/api/articles/1/comments?p=1")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(10);
+        expect(response.body.comments[0]).toMatchObject(firstCommentObj);
+        expect(response.body.comments[1]).toMatchObject(secondCommentObj);
+      });
+  });
+
+  test("Get: 200 sends an array of comments of when given a page query (p) and default limit query is 10", () => {
+    const commentObj = {
+      comment_id: 9,
+      body: "Superficially charming",
+      article_id: 1,
+      author: "icellusedkars",
+      votes: 0,
+      created_at: "2020-01-01T03:08:00.000Z",
+    };
+    return request(app)
+      .get("/api/articles/1/comments?p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(1);
+        expect(response.body.comments[0]).toMatchObject(commentObj);
+      });
+  });
+
+  test("Get: 200 sends an array of comments of when given a page query (p) and limit query", () => {
+    const firstCommentObj = {
+      comment_id: 8,
+      body: "Delicious crackerbreads",
+      article_id: 1,
+      author: "icellusedkars",
+      votes: 0,
+      created_at: "2020-04-14T20:19:00.000Z",
+    };
+    const secondCommentObj = {
+      comment_id: 6,
+      body: "I hate streaming eyes even more",
+      article_id: 1,
+      author: "icellusedkars",
+      votes: 0,
+      created_at: "2020-04-11T21:02:00.000Z",
+    };
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments.length).toBe(5);
+        expect(response.body.comments[0]).toMatchObject(firstCommentObj);
+        expect(response.body.comments[1]).toMatchObject(secondCommentObj);
+      });
+  });
+
+  test("Get: 200 sends an empty array when given a hig page query that has no comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=200")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toEqual([]);
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when given a negative limit query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=-2")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when given a invalid limit query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=not-valid")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when given a invalid page (p) query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=not-valid")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when given a page (p) query that is a negative number", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=-10")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when doing a sql injection through p query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=2 ; SELECT * FROM articles RETURNING *")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("Get: 400 sends an appropriate status error message when doing a sql injection through limit query", () => {
+    return request(app)
+      .get(
+        "/api/articles/1/comments?limit=2 ; SELECT * FROM articles RETURNING *"
+      )
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 
