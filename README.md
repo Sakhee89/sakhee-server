@@ -4,7 +4,7 @@ The link to the [Deployed project](https://sakhee-news.onrender.com/)
 
 ## Summary
 
-This project was developed using node.js and postgres. It has a similar functuality of a read world backend service (such as Reddit) that provides information to the front end architecture.
+This API project was developed using node.js and postgres. It has a similar functuality of a read world backend service (such as Reddit) that provides information to the front end architecture.
 
 ## Installation & Setup
 
@@ -18,13 +18,13 @@ To run test, use npm run test
 
 ## Environment variables
 
-To begin, create three environment variable files at the root level, and replace the default with out own database.
+To begin, create three environment variable files at the root level, and replace the default with your own database.
 
 First environment variable: .env.test, in this file add the line PGDATABASE=<your_database_test>
 
 Second environment variable: .env.development, in this file add the line PGDATABASE=<your_database>
 
-Third environment variable: .env.production, in this file add the line DATABASE_URL=<URL of hosted database>
+Third environment variable: .env.production, in this file add the line DATABASE_URL=<Your_hosted_URL_database>
 
 ## Versions
 
