@@ -596,6 +596,7 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.article).toMatchObject({
           article_id: 1,
           title: "Living in the shadow of a great man",
+          body: "I find this existence challenging",
           topic: "mitch",
           author: "butter_bridge",
           created_at: "2020-07-09T20:11:00.000Z",
@@ -615,6 +616,7 @@ describe("/api/articles/:article_id", () => {
           article_id: 3,
           title: "Eight pug gifs that remind me of mitch",
           topic: "mitch",
+          body: "some gifs",
           author: "icellusedkars",
           created_at: "2020-11-03T09:12:00.000Z",
           article_img_url:
@@ -670,6 +672,7 @@ describe("/api/articles/:article_id", () => {
           title: "Living in the shadow of a great man",
           topic: "mitch",
           author: "butter_bridge",
+          body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z",
           votes: 101,
           article_img_url:
@@ -688,6 +691,7 @@ describe("/api/articles/:article_id", () => {
           article_id: 1,
           title: "Living in the shadow of a great man",
           topic: "mitch",
+          body: "I find this existence challenging",
           author: "butter_bridge",
           created_at: "2020-07-09T20:11:00.000Z",
           votes: -10,
@@ -903,7 +907,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 
-  test("Get: 200 sends an empty array when given a hig page query that has no comments", () => {
+  test("Get: 200 sends an empty array when given a page query that has no comments", () => {
     return request(app)
       .get("/api/articles/1/comments?p=200")
       .expect(200)
