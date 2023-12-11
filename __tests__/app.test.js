@@ -489,6 +489,7 @@ describe("/api/articles", () => {
       title: "UNCOVERED: Unidentified Object spotted",
       topic: "mitch",
       author: "rogersop",
+      body: "Fallen hard from the heavens!",
       created_at: expect.any(String),
       votes: 0,
       article_img_url:
@@ -504,7 +505,7 @@ describe("/api/articles", () => {
       });
   });
 
-  test("POST: 201 inserts a new article to the articles table and returns the created article to the client when article_img_url is missing, and check that a body doesnt exist", () => {
+  test("POST: 201 inserts a new article to the articles table and returns the created article to the client when article_img_url is missing", () => {
     const newArticle = {
       title: "UNCOVERED: Unidentified Object spotted",
       topic: "mitch",
@@ -516,6 +517,7 @@ describe("/api/articles", () => {
       title: "UNCOVERED: Unidentified Object spotted",
       topic: "mitch",
       author: "rogersop",
+      body: "Fallen hard from the heavens!",
       created_at: expect.any(String),
       votes: 0,
       article_img_url:
@@ -528,7 +530,6 @@ describe("/api/articles", () => {
       .expect(201)
       .then((response) => {
         expect(response.body.article).toMatchObject(returnedArticle);
-        expect(response.body.article.body).toBe(undefined);
       });
   });
 
