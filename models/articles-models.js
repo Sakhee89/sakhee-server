@@ -39,7 +39,9 @@ exports.selectArticles = (
     queryString += `WHERE topic = $3 `;
   }
 
-  queryString += `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order} LIMIT $1 OFFSET $2`;
+  queryString += `GROUP BY articles.article_id ORDER BY ${
+    sort_by === "comment_count" ? "" : `articles.`
+  }${sort_by} ${order} LIMIT $1 OFFSET $2`;
 
   return db.query(queryString, queryValues).then((result) => {
     return result.rows;
