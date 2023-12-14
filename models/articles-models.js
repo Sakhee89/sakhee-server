@@ -19,6 +19,7 @@ exports.selectArticles = (
     "votes",
     "article_img_url",
     "topic",
+    "comment_count",
   ];
 
   order = order.toLowerCase();
