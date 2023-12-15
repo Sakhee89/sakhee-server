@@ -8,7 +8,7 @@ This API project was developed using node.js and postgres. It has a similar func
 
 ## Installation & Setup
 
-To clone the repo use git clone https://github.com/Sakhee89/sakhee-server to clone the project.
+To clone the repo use the command git clone https://github.com/Sakhee89/sakhee-server.
 
 Next, install the dependencies and devDependencies by using the command npm install
 
