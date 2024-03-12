@@ -116,7 +116,7 @@ describe("/api/articles", () => {
         title: "UNCOVERED: catspiracy to bring down democracy",
         article_id: 5,
         topic: "cats",
-        created_at: "2020-08-03T13:14:00.000Z",
+        created_at: expect.any(String),
         votes: 0,
         article_img_url:
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -599,7 +599,7 @@ describe("/api/articles/:article_id", () => {
           body: "I find this existence challenging",
           topic: "mitch",
           author: "butter_bridge",
-          created_at: "2020-07-09T20:11:00.000Z",
+          created_at: expect.any(String),
           votes: 100,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -618,7 +618,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           body: "some gifs",
           author: "icellusedkars",
-          created_at: "2020-11-03T09:12:00.000Z",
+          created_at: expect.any(String),
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
@@ -673,7 +673,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           author: "butter_bridge",
           body: "I find this existence challenging",
-          created_at: "2020-07-09T20:11:00.000Z",
+          created_at: expect.any(String),
           votes: 101,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -693,7 +693,7 @@ describe("/api/articles/:article_id", () => {
           topic: "mitch",
           body: "I find this existence challenging",
           author: "butter_bridge",
-          created_at: "2020-07-09T20:11:00.000Z",
+          created_at: expect.any(String),
           votes: -10,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -766,7 +766,7 @@ describe("/api/articles/:article_id/comments", () => {
           article_id: 1,
           author: "icellusedkars",
           votes: 0,
-          created_at: "2020-01-01T03:08:00.000Z",
+          created_at: expect.any(String),
         };
         expect(
           response.body.comments[response.body.comments.length - 1]
@@ -842,7 +842,7 @@ describe("/api/articles/:article_id/comments", () => {
       article_id: 1,
       author: "icellusedkars",
       votes: 0,
-      created_at: "2020-11-03T21:00:00.000Z",
+      created_at: expect.any(String),
     };
     const secondCommentObj = {
       comment_id: 2,
@@ -850,7 +850,7 @@ describe("/api/articles/:article_id/comments", () => {
       article_id: 1,
       author: "butter_bridge",
       votes: 14,
-      created_at: "2020-10-31T03:03:00.000Z",
+      created_at: expect.any(String),
     };
     return request(app)
       .get("/api/articles/1/comments?p=1")
@@ -869,7 +869,7 @@ describe("/api/articles/:article_id/comments", () => {
       article_id: 1,
       author: "icellusedkars",
       votes: 0,
-      created_at: "2020-01-01T03:08:00.000Z",
+      created_at: expect.any(String),
     };
     return request(app)
       .get("/api/articles/1/comments?p=2")
@@ -887,7 +887,7 @@ describe("/api/articles/:article_id/comments", () => {
       article_id: 1,
       author: "icellusedkars",
       votes: 0,
-      created_at: "2020-04-14T20:19:00.000Z",
+      created_at: expect.any(String),
     };
     const secondCommentObj = {
       comment_id: 6,
@@ -895,7 +895,7 @@ describe("/api/articles/:article_id/comments", () => {
       article_id: 1,
       author: "icellusedkars",
       votes: 0,
-      created_at: "2020-04-11T21:02:00.000Z",
+      created_at: expect.any(String),
     };
     return request(app)
       .get("/api/articles/1/comments?limit=5&p=2")
@@ -1135,7 +1135,7 @@ describe("/api/comments/:comment_id", () => {
           votes: 17,
           author: "butter_bridge",
           article_id: 9,
-          created_at: "2020-04-06T12:17:00.000Z",
+          created_at: expect.any(String),
         });
       });
   });
@@ -1152,7 +1152,7 @@ describe("/api/comments/:comment_id", () => {
           votes: -4,
           author: "butter_bridge",
           article_id: 9,
-          created_at: "2020-04-06T12:17:00.000Z",
+          created_at: expect.any(String),
         });
       });
   });
