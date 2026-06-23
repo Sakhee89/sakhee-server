@@ -1,6 +1,6 @@
 # **Sakhee News API**
 
-You can find the link to the deployed project [Here](https://sakhee-news.onrender.com/)
+You can find the link to the deployed project [Here](https://sakhee-news.onrender.com/api)
 
 ## Summary
 
